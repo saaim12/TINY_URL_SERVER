@@ -33,7 +33,7 @@ exports.shortenUrl = async (req, res) => {
 
     res.json({
       longUrl: url,
-      shortUrl: `http://localhost:4200/assets/web-published-form//?formUrl=${shortUrl}`,
+      shortUrl: `http://localhost:4200/assets/web-published-form/?id=${shortUrl}`,
     });
   } catch (error) {
     console.error("Error shortening URL:", error);

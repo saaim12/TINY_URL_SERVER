@@ -5,7 +5,7 @@ const urlRouter = require("./routes/urlRoutes");
 
 const app = express();
 
-// Middleware
+
 app.use(bodyParser.json());
 app.use(cors());
 

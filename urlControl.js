@@ -19,7 +19,7 @@ exports.shortenUrl = async (req, res) => {
     // Store the mapping in the in-memory hashmap
     urlMap.set(shortUrl, url);
 
-    // Schedule deletion after the expiration time
+    // Schedule deletion of that specific url after the expiration time
     setTimeout(() => {
       if (urlMap.has(shortUrl)) {
         console.log(`Deleting shortUrl => ${shortUrl} from HashMap`);
@@ -27,7 +27,7 @@ exports.shortenUrl = async (req, res) => {
       }
     }, config.urlExpirationMs);
 
-    // Log for debugging
+    // Logging for debugging
     console.log(`HashMap: shortUrl => ${shortUrl}, longUrl => ${url}`);
     console.log("Full HashMap: ", Array.from(urlMap.entries()));
 
@@ -40,7 +40,7 @@ exports.shortenUrl = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
+//not used now
 // Redirect to the long URL
 exports.redirectToLongUrl = async (req, res) => {
   try {

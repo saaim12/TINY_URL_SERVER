@@ -9,7 +9,7 @@ const router = express.Router();
 
 // Route to create a short URL
 router.post("/shortenURL", shortenUrl);
-
+///not using now
 // Route to redirect to the long URL
 router.get("/:hash", redirectToLongUrl);
 

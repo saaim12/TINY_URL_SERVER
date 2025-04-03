@@ -1,5 +1,4 @@
 const { nanoid } = require("nanoid"); // For generating short IDs
-const axios = require("axios");
 const config = require("./config.json");
 
 // In-memory hashmap to store URL mappings
@@ -14,33 +13,43 @@ exports.shortenUrl = async (req, res) => {
       return res.status(400).json({ message: "Long URL is required" });
     }
 
-    const shortUrl = nanoid(8); // Generate an 8-character short URL
+    const shortId = nanoid(8); // More descriptive variable name
+    const shortUrl = `${req.protocol}://${req.get('host')}/api/url/${shortId}`; // Construct full short URL
+    const expirationTimeMs = Date.now() + config.urlExpirationMs;
+    const expirationTime = new Date(expirationTimeMs).toISOString(); // Format as UTC ISO string
 
     // Store the mapping in the in-memory hashmap
-    urlMap.set(shortUrl, url);
+    urlMap.set(shortId, url);
 
     // Schedule deletion of that specific url after the expiration time
     setTimeout(() => {
-      if (urlMap.has(shortUrl)) {
-        console.log(`Deleting shortUrl => ${shortUrl} from HashMap`);
-        urlMap.delete(shortUrl);
+      if (urlMap.has(shortId)) {
+        console.log(`Deleting shortUrl ID => ${shortId} from HashMap`);
+        urlMap.delete(shortId);
       }
     }, config.urlExpirationMs);
 
     // Logging for debugging
-    console.log(`HashMap: shortUrl => ${shortUrl}, longUrl => ${url}`);
+    const now = new Date();
+    const expires = new Date(expirationTimeMs);
+    console.log(`Current time (PST): ${now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}`);
+    console.log(`Current time (PKT): ${now.toLocaleString('en-US', { timeZone: 'Asia/Karachi' })}`);
+    console.log(`Expires at (UTC): ${expirationTime}`);
+    console.log(`Expires at (PKT): ${expires.toLocaleString('en-US', { timeZone: 'Asia/Karachi' })}`);
+    console.log(`HashMap: shortId => ${shortId}, longUrl => ${url}`);
     console.log("Full HashMap: ", Array.from(urlMap.entries()));
 
-    res.json({
+    res.status(201).json({ // Use 201 Created for successful resource creation
       longUrl: url,
-      shortUrl: `http://localhost:4200/assets/web-published-form/?id=${shortUrl}`,
+      shortUrl: shortUrl,
+      expiresAt: `expires on ${expires}`, // This is in UTC
     });
   } catch (error) {
     console.error("Error shortening URL:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-//not used now
+
 // Redirect to the long URL
 exports.redirectToLongUrl = async (req, res) => {
   try {

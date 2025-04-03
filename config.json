@@ -1,4 +1,4 @@
 {
-    "urlExpirationMs": 600000
-  }
-  
+  "urlExpirationMs": 3600000,
+  "port": 3001
+}
